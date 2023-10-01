@@ -1,5 +1,7 @@
 ﻿using System;
 using Cadastro.Entity;
+using Cadastro.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cadastro.Interface
 {
@@ -9,9 +11,9 @@ namespace Cadastro.Interface
 
         T ObterPorId(int id);
 
-        void Cadastrar(T usuario);
+        void Cadastrar(T entidade);
 
-        void Alterar(T usuario);
+        void Alterar(T entidade);
 
         void Deletar(int id);
     }
