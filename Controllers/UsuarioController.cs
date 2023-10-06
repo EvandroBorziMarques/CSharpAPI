@@ -11,10 +11,12 @@ namespace Cadastro.Controllers
     public class UsuarioController : ControllerBase
     {
         public IUsuarioRepository _usuarioRepository;
+        private readonly ILogger<UsuarioController> _logger;
 
-        public UsuarioController(IUsuarioRepository usuarioRepository)
+        public UsuarioController(IUsuarioRepository usuarioRepository, ILogger<UsuarioController> logger)
         {
             _usuarioRepository = usuarioRepository;
+            _logger = logger;
         }
 
         [HttpGet("obter-todos-com-pedidos/{id}")]
@@ -26,12 +28,22 @@ namespace Cadastro.Controllers
         [HttpGet("obter-todos-usuarios")]
         public IActionResult ObterTodosUsuario()
         {
-            return Ok(_usuarioRepository.ObterTodos());
+            try
+            {
+                throw new Exception("DEU ERRO!");
+                return Ok(_usuarioRepository.ObterTodos());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{DateTime.Now:yyyy-MM-dd} | Exception forçada: {ex.Message}");
+                return BadRequest();
+            }
         }
 
         [HttpGet("obter-usuario-por-id/{id}")]
         public IActionResult ObterUsuarioId(int id)
         {
+            _logger.LogInformation("Executando método ObterPorId");
             return Ok(_usuarioRepository.ObterPorId(id));
         }
 
@@ -39,7 +51,9 @@ namespace Cadastro.Controllers
         public IActionResult CadastrarUsuario(CadastrarUsuarioDTO usuarioDTO)
         {
             _usuarioRepository.Cadastrar(new Usuario(usuarioDTO));
-            return Ok("Usuário cadastrado com sucesso");
+            var mensagem = $"Usuário cadastrado com sucesso! | Nome: {usuarioDTO.Nome}";
+            _logger.LogWarning(mensagem);
+            return Ok(mensagem);
         }
 
         [HttpPut]
